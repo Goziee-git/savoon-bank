@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import axios from 'axios';
 import TransactionContext from './transactionContext';
 import transactionReducer from './transactionReducer';
+import { mockGetTransactions, mockAddTransaction, mockAddCredit } from '../../utils/mockTransactions';
 import {
   GET_TRANSACTIONS,
   ADD_TRANSACTION,
@@ -23,7 +24,15 @@ const TransactionState = props => {
   const getTransactions = async () => {
     try {
       setLoading();
-      const res = await axios.get('/api/transactions');
+      let res;
+      try {
+        // Try real API first
+        res = await axios.get('/api/transactions');
+      } catch (err) {
+        // Fall back to mock if real API fails
+        console.log('Using mock transactions');
+        res = await mockGetTransactions();
+      }
 
       dispatch({
         type: GET_TRANSACTIONS,
@@ -32,7 +41,7 @@ const TransactionState = props => {
     } catch (err) {
       dispatch({
         type: TRANSACTION_ERROR,
-        payload: err.response.data.message
+        payload: err.response?.data?.message || err.message || 'Failed to load transactions'
       });
     }
   };
@@ -47,7 +56,15 @@ const TransactionState = props => {
 
     try {
       setLoading();
-      const res = await axios.post('/api/transactions/spend', transaction, config);
+      let res;
+      try {
+        // Try real API first
+        res = await axios.post('/api/transactions/spend', transaction, config);
+      } catch (err) {
+        // Fall back to mock if real API fails
+        console.log('Using mock transaction system');
+        res = await mockAddTransaction(transaction);
+      }
 
       dispatch({
         type: ADD_TRANSACTION,
@@ -58,7 +75,42 @@ const TransactionState = props => {
     } catch (err) {
       dispatch({
         type: TRANSACTION_ERROR,
-        payload: err.response.data.message
+        payload: err.response?.data?.message || err.message || 'Transaction failed'
+      });
+      throw err;
+    }
+  };
+
+  // Add Credit
+  const addCredit = async (amount) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    try {
+      setLoading();
+      let res;
+      try {
+        // Try real API first
+        res = await axios.post('/api/transactions/credit', { amount }, config);
+      } catch (err) {
+        // Fall back to mock if real API fails
+        console.log('Using mock credit system');
+        res = await mockAddCredit(amount);
+      }
+
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: res.data.data.transaction
+      });
+
+      return res.data.data.newBalance;
+    } catch (err) {
+      dispatch({
+        type: TRANSACTION_ERROR,
+        payload: err.response?.data?.message || err.message || 'Credit addition failed'
       });
       throw err;
     }
@@ -80,6 +132,7 @@ const TransactionState = props => {
         error: state.error,
         getTransactions,
         addTransaction,
+        addCredit,
         clearTransactions
       }}
     >

@@ -6,9 +6,20 @@ const PrivateRoute = ({ component: Component }) => {
   const authContext = useContext(AuthContext);
   const { isAuthenticated, loading } = authContext;
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '200px' 
+      }}>
+        <div>Loading...</div>
+      </div>
+    );
+  }
   
-  return isAuthenticated ? <Component /> : <Navigate to='/login' />;
+  return isAuthenticated ? <Component /> : <Navigate to='/login' replace />;
 };
 
 export default PrivateRoute;

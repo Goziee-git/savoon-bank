@@ -17,15 +17,37 @@ const Navbar = () => {
 
   const authLinks = (
     <>
-      <li>Hello {user && user.name}</li>
       <li>
-        <Link to='/dashboard'>Dashboard</Link>
+        <Link to='/dashboard'>
+          <i className="fas fa-chart-line"></i>
+          Dashboard
+        </Link>
       </li>
       <li>
-        <Link to='/transactions'>Transactions</Link>
+        <Link to='/transactions'>
+          <i className="fas fa-exchange-alt"></i>
+          Transactions
+        </Link>
       </li>
       <li>
-        <a onClick={onLogout} href='#!'>
+        <Link to='/bill-payments'>
+          <i className="fas fa-file-invoice-dollar"></i>
+          Bill Payments
+        </Link>
+      </li>
+      <li>
+        <Link to='/loans'>
+          <i className="fas fa-handshake"></i>
+          Loans
+        </Link>
+      </li>
+      <li className="welcome">
+        <span>
+          <i className="fas fa-user"></i>
+          Hello, {user?.name || 'User'}
+        </span>
+        <a onClick={onLogout} href='#!' style={{ color: 'rgba(255,255,255,0.8)' }}>
+          <i className="fas fa-sign-out-alt"></i>
           Logout
         </a>
       </li>
@@ -35,21 +57,34 @@ const Navbar = () => {
   const guestLinks = (
     <>
       <li>
-        <Link to='/register'>Register</Link>
+        <Link to='/'>
+          <i className="fas fa-home"></i>
+          Home
+        </Link>
       </li>
       <li>
-        <Link to='/login'>Login</Link>
+        <Link to='/register'>
+          <i className="fas fa-user-plus"></i>
+          Register
+        </Link>
+      </li>
+      <li>
+        <Link to='/login'>
+          <i className="fas fa-sign-in-alt"></i>
+          Login
+        </Link>
       </li>
     </>
   );
 
   return (
-    <div className='navbar bg-primary'>
-      <h1>
-        <Link to='/'>
-          <i className='fas fa-wallet'></i> Finance App
+    <div className='navbar'>
+      <div className="logo">
+        <Link to={isAuthenticated ? '/dashboard' : '/'}>
+          <i className='fas fa-university'></i>
+          Savoon Bank
         </Link>
-      </h1>
+      </div>
       <ul>{isAuthenticated ? authLinks : guestLinks}</ul>
     </div>
   );

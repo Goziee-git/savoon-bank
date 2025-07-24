@@ -5,8 +5,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import EmailConfirmation from './pages/EmailConfirmation';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
+import BillPayments from './pages/BillPayments';
+import Loans from './pages/Loans';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -32,6 +35,7 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/confirm-email" element={<EmailConfirmation />} />
                 <Route 
                   path="/dashboard" 
                   element={<PrivateRoute component={Dashboard} />} 
@@ -39,6 +43,14 @@ const App = () => {
                 <Route 
                   path="/transactions" 
                   element={<PrivateRoute component={Transactions} />} 
+                />
+                <Route 
+                  path="/bill-payments" 
+                  element={<PrivateRoute component={BillPayments} />} 
+                />
+                <Route 
+                  path="/loans" 
+                  element={<PrivateRoute component={Loans} />} 
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>
