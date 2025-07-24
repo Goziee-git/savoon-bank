@@ -1,0 +1,57 @@
+name: Security Scanning
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Run every Monday at 2 AM
+  workflow_dispatch:
+
+jobs:
+  dependency-scan:
+    name: Dependency Security Scan
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [backend, frontend]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: ${{ matrix.service }}/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./${{ matrix.service }}
+      run: npm ci
+      
+    - name: Run npm audit
+      working-directory: ./${{ matrix.service }}
+      run: npm audit --audit-level=moderate
+      
+    - name: Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high --file=${{ matrix.service }}/package.json
+        
+  code-scan:
+    name: Code Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript
+        
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
