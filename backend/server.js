@@ -4,8 +4,8 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const sequelize = require('./config/database');
-const User = require('./models/User');
-const Transaction = require('./models/Transaction');
+// Import models with associations
+require('./models/index');
 
 const app = express();
 
@@ -17,10 +17,6 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/transactions', require('./routes/transactions'));
-
-// Define relationships
-User.hasMany(Transaction);
-Transaction.belongsTo(User);
 
 // Database sync and server start
 const PORT = process.env.PORT || 5000;
@@ -35,6 +31,7 @@ async function startServer() {
     });
   } catch (error) {
     console.error('Unable to sync database:', error);
+    process.exit(1);
   }
 }
 

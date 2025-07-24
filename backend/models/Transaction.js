@@ -13,14 +13,6 @@ const Transaction = sequelize.define('Transaction', {
   type: {
     type: DataTypes.ENUM('credit', 'debit'),
     allowNull: false
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'id'
-    }
   }
 });
 
