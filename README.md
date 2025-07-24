@@ -1,4 +1,4 @@
-# Finance Application
+# SAVOON BANK Application 💴
 
 A full-stack application built with Node.js, Express, React, and SQLite that allows users to manage credits and transactions. This application uses SQLite for its database, making it lightweight and easy to set up with no additional database server required.
 
@@ -48,13 +48,13 @@ Before you begin, ensure you have installed:
 ### Installation Steps
 
 1. Clone the repository:
-\`\`\`bash
+```bash
 git clone <repository-url>
 cd finance-app
-\`\`\`
+```
 
 2. Set up the Backend:
-\`\`\`bash
+```bash
 # Navigate to backend directory
 cd backend
 
@@ -71,10 +71,11 @@ JWT_SECRET=your_secure_jwt_secret_here
 JWT_EXPIRE=24h
 SIGNUP_CREDIT_AMOUNT=1000
 EOL
-\`\`\`
+```
+### to get a JWT token for backend access
 
 3. Set up the Frontend:
-\`\`\`bash
+```bash
 # Navigate to frontend directory
 cd ../frontend
 
@@ -85,23 +86,23 @@ npm install
 cat > .env << EOL
 REACT_APP_API_URL=http://localhost:5000
 EOL
-\`\`\`
+```
 
 ### Database Setup
 
 The SQLite database will be automatically created when you first start the server. The database file will be located at:
-\`/backend/database/finance.sqlite\`
+```/backend/database/finance.sqlite```
 
 To manually initialize the database:
-\`\`\`bash
+```bash
 cd backend
 node -e "require('./config/database').sync()"
-\`\`\`
+```
 
 ### Running the Application
 
 1. Start the Backend Server:
-\`\`\`bash
+```bash
 # From the backend directory
 cd backend
 npm run dev
@@ -109,39 +110,39 @@ npm run dev
 # You should see:
 # Database synced successfully
 # Server running on port 5000
-\`\`\`
+```
 
 2. Start the Frontend Development Server:
-\`\`\`bash
+```bash
 # From the frontend directory
 cd frontend
 npm start
 
 # The application will open in your browser at http://localhost:3000
-\`\`\`
+```
 
 ### Verifying the Setup
 
 1. Check Database Creation:
-\`\`\`bash
+```bash
 # From the backend directory
 ls database/finance.sqlite
 # Should show the SQLite database file
-\`\`\`
+```
 
 2. Test API Connection:
-\`\`\`bash
+```bash
 # Test the API health endpoint
 curl http://localhost:5000/api/health
 # Should return: {"status": "ok"}
-\`\`\`
+```
 
 ## Database Management
 
 ### Viewing Database Content
 
 You can use SQLite command line tool to view the database:
-\`\`\`bash
+```bash
 # Install SQLite command line tool if needed
 # Ubuntu/Debian:
 sudo apt-get install sqlite3
@@ -156,41 +157,30 @@ sqlite3 backend/database/finance.sqlite
 SELECT * FROM Users;      # View all users
 SELECT * FROM Transactions;  # View all transactions
 .quit                     # Exit SQLite CLI
-\`\`\`
-
-### Resetting the Database
-
-To reset the database, you can:
-\`\`\`bash
-# Remove the existing database
-rm backend/database/finance.sqlite
-
-# Restart the server - it will create a new database automatically
-npm run dev
-\`\`\`
+```
 
 ## API Endpoints
 
 ### Authentication Routes
 - POST /api/auth/register - Register a new user
-  \`\`\`bash
+  ```bash
   curl -X POST http://localhost:5000/api/auth/register \\
     -H "Content-Type: application/json" \\
     -d '{"name":"Test User","email":"test@example.com","password":"password123"}'
-  \`\`\`
+  ```
 
 - POST /api/auth/login - Login user
-  \`\`\`bash
+  ```bash
   curl -X POST http://localhost:5000/api/auth/login \\
     -H "Content-Type: application/json" \\
     -d '{"email":"test@example.com","password":"password123"}'
-  \`\`\`
+  ```
 
 - GET /api/auth/me - Get logged in user info
-  \`\`\`bash
+  ```bash
   curl -X GET http://localhost:5000/api/auth/me \\
     -H "Authorization: Bearer YOUR_JWT_TOKEN"
-  \`\`\`
+  ```
 
 ### Transaction Routes
 - GET /api/transactions - Get all transactions
@@ -202,7 +192,7 @@ npm run dev
 ### Common Issues and Solutions
 
 1. Database Connection Issues:
-\`\`\`bash
+```bash
 # Check if database file exists
 ls backend/database/finance.sqlite
 
@@ -211,22 +201,22 @@ ls -l backend/database/finance.sqlite
 
 # Ensure database directory exists
 mkdir -p backend/database
-\`\`\`
+```
 
 2. Server Won't Start:
-\`\`\`bash
+```bash
 # Check if port 5000 is already in use
 lsof -i :5000
 # Kill process if needed
 kill -9 <PID>
-\`\`\`
+```
 
 3. Database Reset:
-\`\`\`bash
-# Remove and recreate database
+```bash
+#Remove and recreate database
 rm backend/database/finance.sqlite
 node -e "require('./config/database').sync()"
-\`\`\`
+```
 
 ## Development
 
@@ -243,38 +233,38 @@ To add new features to the backend:
 
 To add new features to the frontend:
 
-1. Add new components in /frontend/src/components
-2. Create new pages in /frontend/src/pages
-3. Update context if needed in /frontend/src/context
+1. Add new components in ```/frontend/src/components```
+2. Create new pages in ```/frontend/src/pages```
+3. Update context if needed in ```/frontend/src/context```
 4. Modify App.js to include new routes
 
 ## Testing
 
 ### Backend Testing
-\`\`\`bash
+```bash
 cd backend
 npm test
-\`\`\`
+```
 
 ### Frontend Testing
-\`\`\`bash
+```bash
 cd frontend
 npm test
-\`\`\`
+```
 
 ## Building for Production
 
 ### Backend
-\`\`\`bash
+```bash
 cd backend
 npm run build
-\`\`\`
+```
 
 ### Frontend
-\`\`\`bash
+```bash
 cd frontend
 npm run build
-\`\`\`
+```
 
 ## Deployment
 
