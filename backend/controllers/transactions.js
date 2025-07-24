@@ -1,6 +1,5 @@
 const { validationResult } = require('express-validator');
-const Transaction = require('../models/Transaction');
-const User = require('../models/User');
+const { Transaction, User } = require('../models');
 const sequelize = require('../config/database');
 
 // Get all transactions for a user
