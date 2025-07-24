@@ -276,7 +276,8 @@ npm run build
 2. Deploy Frontend:
    - Build the React application
    - Deploy static files to hosting service
-   - Configure environment variables
+   - Configure environment variables correctly
+   
 
 ## Support
 
