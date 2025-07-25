@@ -249,6 +249,17 @@ const Dashboard = () => {
                 <span>Loans</span>
               </a>
               
+              <a href="/analytics" className="btn btn-warning" style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                padding: '1.5rem 1rem',
+                textDecoration: 'none'
+              }}>
+                <i className="fas fa-chart-line" style={{ fontSize: '2rem', marginBottom: '0.5rem' }}></i>
+                <span>Analytics</span>
+              </a>
+              
               <button 
                 className="btn btn-secondary"
                 onClick={() => window.location.reload()}

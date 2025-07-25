@@ -1,41 +1,118 @@
 // Mock transaction system for testing when backend is not available
 
-let mockTransactions = [
-  {
-    _id: '1',
-    description: 'Initial Credit',
-    amount: 1000,
-    type: 'credit',
-    balance: 1000,
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    _id: '2',
-    description: 'Coffee Purchase',
-    amount: 5.50,
-    type: 'debit',
-    balance: 994.50,
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    _id: '3',
-    description: 'Grocery Shopping',
-    amount: 45.75,
-    type: 'debit',
-    balance: 948.75,
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    _id: '4',
-    description: 'Bonus Credit',
-    amount: 100,
-    type: 'credit',
-    balance: 1048.75,
-    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-  }
-];
+// Generate more realistic mock data
+const generateMockTransactions = () => {
+  const categories = ['Food & Dining', 'Transportation', 'Shopping', 'Entertainment', 'Bills & Utilities', 'Healthcare', 'Education', 'Travel', 'Other'];
+  const descriptions = {
+    'Food & Dining': ['Starbucks Coffee', 'McDonald\'s', 'Grocery Store', 'Pizza Hut', 'Local Restaurant', 'Food Delivery'],
+    'Transportation': ['Gas Station', 'Uber Ride', 'Public Transit', 'Parking Fee', 'Car Maintenance'],
+    'Shopping': ['Amazon Purchase', 'Target', 'Clothing Store', 'Electronics Store', 'Online Shopping'],
+    'Entertainment': ['Movie Theater', 'Netflix Subscription', 'Concert Tickets', 'Gaming', 'Streaming Service'],
+    'Bills & Utilities': ['Electric Bill', 'Internet Bill', 'Phone Bill', 'Water Bill', 'Insurance'],
+    'Healthcare': ['Pharmacy', 'Doctor Visit', 'Dental Care', 'Health Insurance', 'Medical Supplies'],
+    'Education': ['Course Fee', 'Books', 'Online Learning', 'Training Program', 'Certification'],
+    'Travel': ['Hotel Booking', 'Flight Ticket', 'Car Rental', 'Travel Insurance', 'Vacation Expense'],
+    'Other': ['ATM Withdrawal', 'Bank Fee', 'Miscellaneous', 'Gift', 'Donation']
+  };
 
-let currentBalance = 1048.75;
+  const transactions = [];
+  let balance = 2500; // Starting balance
+  
+  // Generate transactions for the last 6 months
+  for (let i = 0; i < 180; i++) {
+    const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+    
+    // Randomly decide if there should be a transaction on this day (70% chance)
+    if (Math.random() > 0.3) {
+      const numTransactions = Math.random() > 0.7 ? 2 : 1; // Sometimes multiple transactions per day
+      
+      for (let j = 0; j < numTransactions; j++) {
+        const isCredit = Math.random() > 0.8; // 20% chance of credit
+        
+        if (isCredit) {
+          // Credit transaction (salary, bonus, refund, etc.)
+          const creditDescriptions = ['Salary Deposit', 'Bonus Payment', 'Refund', 'Interest Credit', 'Cashback', 'Gift Money'];
+          const amount = Math.random() > 0.8 ? 
+            Math.floor(Math.random() * 2000) + 1000 : // Large credit (salary/bonus)
+            Math.floor(Math.random() * 200) + 20; // Small credit (refund/cashback)
+          
+          balance += amount;
+          
+          transactions.push({
+            _id: `credit_${i}_${j}`,
+            description: creditDescriptions[Math.floor(Math.random() * creditDescriptions.length)],
+            amount: amount,
+            type: 'credit',
+            category: 'Income',
+            balance: balance,
+            createdAt: new Date(date.getTime() - j * 60 * 60 * 1000).toISOString() // Spread throughout the day
+          });
+        } else {
+          // Debit transaction
+          const category = categories[Math.floor(Math.random() * categories.length)];
+          const categoryDescriptions = descriptions[category];
+          const description = categoryDescriptions[Math.floor(Math.random() * categoryDescriptions.length)];
+          
+          // Different amount ranges based on category
+          let amount;
+          switch (category) {
+            case 'Food & Dining':
+              amount = Math.floor(Math.random() * 50) + 5;
+              break;
+            case 'Transportation':
+              amount = Math.floor(Math.random() * 80) + 10;
+              break;
+            case 'Shopping':
+              amount = Math.floor(Math.random() * 200) + 20;
+              break;
+            case 'Entertainment':
+              amount = Math.floor(Math.random() * 100) + 15;
+              break;
+            case 'Bills & Utilities':
+              amount = Math.floor(Math.random() * 150) + 50;
+              break;
+            case 'Healthcare':
+              amount = Math.floor(Math.random() * 300) + 30;
+              break;
+            case 'Education':
+              amount = Math.floor(Math.random() * 500) + 50;
+              break;
+            case 'Travel':
+              amount = Math.floor(Math.random() * 800) + 100;
+              break;
+            default:
+              amount = Math.floor(Math.random() * 100) + 10;
+          }
+          
+          // Don't allow negative balance
+          if (amount > balance) {
+            amount = Math.floor(balance * 0.8); // Use 80% of available balance
+          }
+          
+          if (amount > 0) {
+            balance -= amount;
+            
+            transactions.push({
+              _id: `debit_${i}_${j}`,
+              description: description,
+              amount: amount,
+              type: 'debit',
+              category: category,
+              balance: balance,
+              createdAt: new Date(date.getTime() - j * 60 * 60 * 1000).toISOString()
+            });
+          }
+        }
+      }
+    }
+  }
+  
+  return transactions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+};
+
+let mockTransactions = generateMockTransactions();
+
+let currentBalance = mockTransactions.length > 0 ? mockTransactions[0].balance : 2500;
 
 export const mockGetTransactions = async () => {
   // Simulate API delay
@@ -70,6 +147,7 @@ export const mockAddTransaction = async (transaction) => {
     description: transaction.description,
     amount: transaction.amount,
     type: 'debit',
+    category: transaction.category || 'Other',
     balance: newBalance,
     createdAt: new Date().toISOString()
   };
@@ -102,6 +180,7 @@ export const mockAddCredit = async (amount) => {
     description: 'Credit Added',
     amount: amount,
     type: 'credit',
+    category: 'Income',
     balance: newBalance,
     createdAt: new Date().toISOString()
   };

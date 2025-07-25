@@ -30,6 +30,12 @@ const Navbar = () => {
         </Link>
       </li>
       <li>
+        <Link to='/analytics'>
+          <i className="fas fa-chart-bar"></i>
+          Analytics
+        </Link>
+      </li>
+      <li>
         <Link to='/bill-payments'>
           <i className="fas fa-file-invoice-dollar"></i>
           Bill Payments

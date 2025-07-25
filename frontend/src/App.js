@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import BillPayments from './pages/BillPayments';
 import Loans from './pages/Loans';
+import Analytics from './pages/Analytics';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -20,6 +21,7 @@ import PrivateRoute from './components/routing/PrivateRoute';
 // Context
 import AuthState from './context/auth/AuthState';
 import TransactionState from './context/transaction/TransactionState';
+import AnalyticsState from './context/analytics/AnalyticsState';
 
 import './App.css';
 
@@ -27,37 +29,43 @@ const App = () => {
   return (
     <AuthState>
       <TransactionState>
-        <Router>
-          <div className="App">
-            <Navbar />
-            <div className="container">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/confirm-email" element={<EmailConfirmation />} />
-                <Route 
-                  path="/dashboard" 
-                  element={<PrivateRoute component={Dashboard} />} 
-                />
-                <Route 
-                  path="/transactions" 
-                  element={<PrivateRoute component={Transactions} />} 
-                />
-                <Route 
-                  path="/bill-payments" 
-                  element={<PrivateRoute component={BillPayments} />} 
-                />
-                <Route 
-                  path="/loans" 
-                  element={<PrivateRoute component={Loans} />} 
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+        <AnalyticsState>
+          <Router>
+            <div className="App">
+              <Navbar />
+              <div className="container">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/confirm-email" element={<EmailConfirmation />} />
+                  <Route 
+                    path="/dashboard" 
+                    element={<PrivateRoute component={Dashboard} />} 
+                  />
+                  <Route 
+                    path="/transactions" 
+                    element={<PrivateRoute component={Transactions} />} 
+                  />
+                  <Route 
+                    path="/bill-payments" 
+                    element={<PrivateRoute component={BillPayments} />} 
+                  />
+                  <Route 
+                    path="/loans" 
+                    element={<PrivateRoute component={Loans} />} 
+                  />
+                  <Route 
+                    path="/analytics" 
+                    element={<PrivateRoute component={Analytics} />} 
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
+              <Footer />
             </div>
-            <Footer />
-          </div>
-        </Router>
+          </Router>
+        </AnalyticsState>
       </TransactionState>
     </AuthState>
   );
