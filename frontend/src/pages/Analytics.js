@@ -18,7 +18,6 @@ const Analytics = () => {
   const { transactions, getTransactions } = transactionContext;
   const { 
     analyticsData, 
-    dateRange, 
     loading, 
     error, 
     generateAnalyticsData, 
@@ -28,18 +27,17 @@ const Analytics = () => {
   const [selectedDateRange, setSelectedDateRange] = useState(30);
 
   useEffect(() => {
-    // Load transactions if not already loaded
     if (!transactions || transactions.length === 0) {
       getTransactions();
     }
-  }, []);
+  }, [getTransactions, transactions]);
 
+  // Generate analytics data when transactions or date range change
   useEffect(() => {
-    // Generate analytics when transactions are available
     if (transactions && transactions.length > 0) {
-      generateAnalyticsData(transactions, selectedDateRange);
+      generateAnalyticsData(transactions, 30); // Defaulting to 30 days
     }
-  }, [transactions, selectedDateRange]);
+  }, [transactions, generateAnalyticsData]);
 
   const handleDateRangeChange = (range) => {
     setSelectedDateRange(range);

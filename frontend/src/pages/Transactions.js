@@ -1,14 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import AuthContext from '../context/auth/authContext';
 import TransactionContext from '../context/transaction/transactionContext';
 import { mockGetUserBalance } from '../utils/mockTransactions';
 import { numberToWordsShort } from '../utils/numberToWords';
 
 const Transactions = () => {
-  const authContext = useContext(AuthContext);
   const transactionContext = useContext(TransactionContext);
 
-  const { user } = authContext;
   const { transactions, addTransaction, addCredit, getTransactions, loading, error } = transactionContext;
 
   const [transaction, setTransaction] = useState({
@@ -21,12 +18,12 @@ const Transactions = () => {
   const [showAddCredit, setShowAddCredit] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  useEffect(() => {
+  useEffect(() => { getTransactions();
     getTransactions();
     setCurrentBalance(mockGetUserBalance());
-  }, []);
+  }, [getTransactions]);
 
-  useEffect(() => {
+  useEffect(() => { getTransactions();
     // Update balance when transactions change
     setCurrentBalance(mockGetUserBalance());
   }, [transactions]);

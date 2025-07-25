@@ -9,24 +9,24 @@ const Dashboard = () => {
   const authContext = useContext(AuthContext);
   const transactionContext = useContext(TransactionContext);
 
-  const { user, loadUser } = authContext;
+  const { user } = authContext;
   const { transactions, getTransactions, loading, error } = transactionContext;
   const [currentBalance, setCurrentBalance] = useState(0);
 
-  useEffect(() => {
+  useEffect(() => { getTransactions();
     getTransactions();
     // Update balance from mock system
     setCurrentBalance(mockGetUserBalance());
-  }, []);
+  }, [getTransactions]);
 
-  useEffect(() => {
+  useEffect(() => { getTransactions();
     // Update user data periodically to get latest balance
     const interval = setInterval(() => {
       setCurrentBalance(mockGetUserBalance());
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [getTransactions]);
 
   const recentTransactions = transactions.slice(0, 5);
   const totalSpent = transactions

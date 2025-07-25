@@ -21,14 +21,17 @@ export const numberToWords = (num) => {
       result += ones[Math.floor(n / 100)] + ' Hundred';
       n %= 100;
       if (n > 0) result += ' ';
+  // cents = cents.slice(0, 2);
     }
     
     if (n >= 20) {
       result += tens[Math.floor(n / 10)];
       n %= 10;
       if (n > 0) result += '-' + ones[n];
+  // cents = cents.slice(0, 2);
     } else if (n > 0) {
       result += ones[n];
+  // cents = cents.slice(0, 2);
     }
     
     return result;
@@ -53,9 +56,12 @@ export const numberToWords = (num) => {
       const chunkWords = convertHundreds(chunk);
       if (scaleIndex > 0) {
         result = chunkWords + ' ' + scales[scaleIndex] + (result ? ' ' + result : '');
-      } else {
+    // cents = cents.slice(0, 2);
+    } else {
         result = chunkWords;
-      }
+    // cents = cents.slice(0, 2);
+    }
+  // cents = cents.slice(0, 2);
     }
     tempDollars = Math.floor(tempDollars / 1000);
     scaleIndex++;
@@ -75,7 +81,6 @@ export const numberToWordsShort = (num) => {
   if (num === 0) return 'Zero Dollars';
   
   const dollars = Math.floor(num);
-  const cents = Math.round((num - dollars) * 100);
   
   if (dollars >= 1000000) {
     const millions = (dollars / 1000000).toFixed(1);

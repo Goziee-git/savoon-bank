@@ -7,7 +7,7 @@ const EmailConfirmation = () => {
   const authContext = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   
-  const { confirmEmail, error, clearErrors } = authContext;
+  const { error, clearErrors } = authContext;
   const [confirmationCode, setConfirmationCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);

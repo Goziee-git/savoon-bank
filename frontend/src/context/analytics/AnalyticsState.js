@@ -1,7 +1,6 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer } from 'react';
 import AnalyticsContext from './analyticsContext';
 import analyticsReducer from './analyticsReducer';
-import TransactionContext from '../transaction/transactionContext';
 import {
   processTransactionsForAnalytics,
   processMonthlyTrends,

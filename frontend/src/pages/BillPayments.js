@@ -4,8 +4,7 @@ import { mockGetUserBalance } from '../utils/mockTransactions';
 import { numberToWordsShort } from '../utils/numberToWords';
 
 const BillPayments = () => {
-  const authContext = useContext(AuthContext);
-  const { user } = authContext;
+  
   
   const [currentBalance, setCurrentBalance] = useState(0);
   const [selectedBill, setSelectedBill] = useState('');

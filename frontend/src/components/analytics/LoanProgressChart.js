@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { calculateLoanProgress, formatCurrency } from '../../utils/analyticsUtils';
 
 const LoanProgressChart = ({ loans, title = "Loan Progress Overview" }) => {
