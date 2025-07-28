@@ -26,7 +26,7 @@ const Transactions = () => {
   useEffect(() => { getTransactions();
     // Update balance when transactions change
     setCurrentBalance(mockGetUserBalance());
-  }, [transactions]);
+  }, [getTransactions]);
 
   const { amount, description } = transaction;
 

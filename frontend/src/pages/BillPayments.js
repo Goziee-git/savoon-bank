@@ -1,5 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
-import AuthContext from '../context/auth/authContext';
+import React, { useState, useEffect } from 'react';
 import { mockGetUserBalance } from '../utils/mockTransactions';
 import { numberToWordsShort } from '../utils/numberToWords';
 
