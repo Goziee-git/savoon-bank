@@ -79,6 +79,10 @@ jobs:
     - name: Install frontend dependencies
       working-directory: ./frontend
       run: npm ci
+
+    - name: Fix frontend vulnerabilities
+      working-directory: ./frontend
+      run: npm audit fix --force || true
       
     - name: Run frontend linting
       working-directory: ./frontend
