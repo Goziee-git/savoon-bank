@@ -4,7 +4,7 @@
 
 A modern, secure, and user-friendly digital banking application built with React.js. Savoon Bank provides a comprehensive platform for managing your finances with an intuitive interface and robust features.
 
-## 🌟 Features
+## 🌟 Features for the app.
 
 ### 🔐 Authentication & Security
 - **Secure User Registration** - Create your account with email verification
