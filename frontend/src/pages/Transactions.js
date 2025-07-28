@@ -324,7 +324,7 @@ const Transactions = () => {
               <div className="text-center" style={{ padding: '3rem' }}>
                 <i className="fas fa-inbox" style={{ fontSize: '4rem', color: '#ccc', marginBottom: '1rem' }}></i>
                 <h3 style={{ color: '#6c757d', marginBottom: '0.5rem' }}>No transactions yet</h3>
-                <p className="text-small">Your transaction history will appear here</p>
+                <p className="text-small">Here is your transactions history🧾</p>
               </div>
             )}
           </div>
