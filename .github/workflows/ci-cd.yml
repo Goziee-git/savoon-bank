@@ -83,7 +83,7 @@ jobs:
     - name: Run frontend linting
       working-directory: ./frontend
       run: |
-         Install ESLint if not present and run linting
+         # Install ESLint if not present and run linting
          if ! npm run lint 2>/dev/null; then
           echo "Lint script not found or failed, installing ESLint..."
           npm install --save-dev eslint
