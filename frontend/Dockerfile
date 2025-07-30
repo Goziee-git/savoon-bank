@@ -21,7 +21,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Production stage with Nginx
-FROM nginx:1.25-alpine AS production
+FROM nginx:1.29-alpine AS production
 
 # Install security updates and remove unnecessary packages
 RUN apk update && apk upgrade && \
