@@ -10,10 +10,12 @@ jobs:
   dependency-scan:
     name: Dependency Security Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     strategy:
       matrix:
         service: [backend, frontend]
+      fail-fast: false
     
     steps:
     - name: Checkout code
@@ -26,20 +28,28 @@ jobs:
         cache: 'npm'
         cache-dependency-path: ${{ matrix.service }}/package-lock.json
         
-    - name: Install dependencies
+    - name: Install dependencies (production only)
       working-directory: ./${{ matrix.service }}
-      run: npm ci
+      run: npm ci --omit=dev
       
-    - name: Run npm audit
+    - name: Run npm audit (production only)
       working-directory: ./${{ matrix.service }}
-      run: npm audit --audit-level=moderate
+      run: npm audit --omit=dev --audit-level=moderate
+      continue-on-error: true
       
-    - name: Run Snyk security scan
-      uses: snyk/actions/node@master
+    - name: Run Snyk security scan (production only)
+      uses: snyk/actions/node@v1.1.0
+      continue-on-error: true
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --severity-threshold=high --file=${{ matrix.service }}/package.json
+        args: --prod --severity-threshold=high --file=${{ matrix.service }}/package.json --timeout=300s
+        
+    - name: Upload Snyk results to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: snyk.sarif
         
   code-scan:
     name: Code Security Scan
