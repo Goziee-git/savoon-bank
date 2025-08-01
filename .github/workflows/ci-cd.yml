@@ -226,7 +226,6 @@ jobs:
         echo "Deployment logic would go here"
         echo "Backend image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest"
         echo "Frontend image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest"
-      run: |
         echo "Deployment logic would go here"
         echo "Backend image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest"
         echo "Frontend image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest"
