@@ -25,7 +25,11 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx --report-unused-disable-directives --max-warnings 50",
-    "lint:fix": "eslint src --ext .js,.jsx --fix"
+    "lint:fix": "eslint src --ext .js,.jsx --fix",
+    "audit:prod": "npm audit --omit=dev",
+    "audit:fix": "npm audit fix --omit=dev",
+    "security:scan": "../scripts/security-scan.sh frontend high",
+    "security:test": "../scripts/test-dependencies.sh frontend"
   },
   "eslintConfig": {
     "extends": [
