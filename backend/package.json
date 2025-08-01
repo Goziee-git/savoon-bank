@@ -10,7 +10,11 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint . --ext .js",
-    "lint:fix": "eslint . --ext .js --fix"
+    "lint:fix": "eslint . --ext .js --fix",
+    "audit:prod": "npm audit --omit=dev",
+    "audit:fix": "npm audit fix --omit=dev",
+    "security:scan": "../scripts/security-scan.sh backend high",
+    "security:test": "../scripts/test-dependencies.sh backend"
   },
   "dependencies": {
     "bcryptjs": "^3.0.0",
