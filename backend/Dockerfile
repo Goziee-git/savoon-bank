@@ -1,6 +1,6 @@
 # Multi-stage build for Savoon Bank Backend
 # Stage 1: Build stage
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -22,7 +22,7 @@ COPY . .
 RUN rm -rf .env.example README.md *.md
 
 # Stage 2: Production stage
-FROM node:18-alpine AS production
+FROM node:22-alpine AS production
 
 # Install security updates
 RUN apk update && apk upgrade && \
