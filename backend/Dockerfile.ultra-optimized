@@ -1,7 +1,7 @@
 # Ultra-optimized Dockerfile for Savoon Bank Backend
 # Uses pre-built binaries to avoid compilation and minimize build time
 
-FROM node:18-alpine AS base
+FROM node:22-alpine AS base
 
 # Install only essential runtime dependencies
 RUN apk update && apk upgrade && \
