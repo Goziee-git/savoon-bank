@@ -16,3 +16,13 @@ patch: {}
 
 # Ignore settings for known false positives or accepted risks
 ignore: {}
+
+# CI/CD specific settings
+exclude:
+  global:
+    - "node_modules/**"
+    - "build/**"
+    - "dist/**"
+    - "coverage/**"
+    - "*.test.js"
+    - "*.spec.js"
