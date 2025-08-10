@@ -221,7 +221,21 @@ services:
     image: savoon-bank-frontend:optimized
 ```
 
-docker compose commands: ```docker-compose up --build -d```
+docker compose commands:
+```bash
+# to build with docker compose
+docker-compose up --build -d
+
+# to check for logs from the compose
+docker-compose logs backend
+docker-compose logs frontend
+```
+### checking for api health
+
+```bash
+curl -s http://localhost:5000/api/health
+curl -s -I http://localhost:3000
+```
 
 
 ## 📝 Best Practices Implemented

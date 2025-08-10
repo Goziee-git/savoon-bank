@@ -68,11 +68,17 @@ mkdir -p database
 cat > .env << EOL
 PORT=5000
 JWT_SECRET=your_secure_jwt_secret_here
-JWT_EXPIRE=24h
+JWT_EXPIRE=1hr
 SIGNUP_CREDIT_AMOUNT=1000
 EOL
 ```
-### to get a JWT token for backend access
+### JWT token for backend access
+to generate a JWT token for backend access run the following command 
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
+#navigate to the backend/.env file and edit the JWT_SECRET= <your-generated-jwt-secret>
+```
 
 3. Set up the Frontend:
 ```bash
