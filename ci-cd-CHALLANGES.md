@@ -189,3 +189,11 @@ npm run security:test   # Full dependency comparison
 - Track metrics on scan performance and findings
 
 These improvements transformed our security scanning from a blocking, unreliable process into a fast, focused, and informative part of our CI/CD pipeline.
+
+**ISSUE 4: QUESTIONS ABOUT LINTING IN THE ci-cd.yml pipeline file**
+1. Code Quality Consistency: Ensures all team members follow the same coding standards across the entire codebase
+2. Early Bug Detection: Catches potential runtime errors, unused variables, and syntax issues before deployment
+3. Security Vulnerability Prevention: Modern linters can detect security anti-patterns like XSS vulnerabilities
+4. Maintainability: Enforces readable, consistent code that's easier to debug and maintain
+5. Team Collaboration: Prevents merge conflicts caused by formatting differences
+6. Performance Optimization: Identifies inefficient code patterns that could impact application performance
