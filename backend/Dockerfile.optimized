@@ -1,0 +1,80 @@
+# Optimized Multi-stage Dockerfile for Savoon Bank Backend
+# This approach minimizes build time and final image size
+
+# Stage 1: Build dependencies (only when package.json changes)
+FROM node:18-alpine AS dependencies
+
+# Install only the build tools needed for sqlite3 compilation
+# Using virtual package to easily remove them later
+RUN apk add --no-cache --virtual .build-deps \
+    python3 \
+    make \
+    g++ \
+    sqlite-dev
+
+WORKDIR /app
+
+# Copy only package files for better Docker layer caching
+COPY package*.json ./
+
+# Install dependencies with optimizations
+RUN npm ci --only=production --no-audit --no-fund && \
+    npm cache clean --force
+
+# Remove build dependencies immediately after installation
+RUN apk del .build-deps
+
+# Stage 2: Runtime image
+FROM node:18-alpine AS runtime
+
+# Install only runtime dependencies and security updates
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    dumb-init \
+    sqlite \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appuser && \
+    adduser -S appuser -u 1001 -G appuser
+
+# Copy production dependencies from build stage
+COPY --from=dependencies --chown=appuser:appuser /app/node_modules ./node_modules
+COPY --from=dependencies --chown=appuser:appuser /app/package*.json ./
+
+# Copy application source code
+COPY --chown=appuser:appuser server.js ./
+COPY --chown=appuser:appuser config/ ./config/
+COPY --chown=appuser:appuser controllers/ ./controllers/
+COPY --chown=appuser:appuser middleware/ ./middleware/
+COPY --chown=appuser:appuser models/ ./models/
+COPY --chown=appuser:appuser routes/ ./routes/
+
+# Create necessary directories with proper permissions
+RUN mkdir -p /app/database /app/logs && \
+    chown -R appuser:appuser /app
+
+# Set production environment variables
+ENV NODE_ENV=production \
+    PORT=5000 \
+    DATABASE_PATH=/app/database/finance.sqlite \
+    NODE_OPTIONS="--max-old-space-size=512"
+
+# Switch to non-root user
+USER appuser
+
+# Expose application port
+EXPOSE 5000
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "server.js"]

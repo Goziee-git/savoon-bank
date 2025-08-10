@@ -23,7 +23,51 @@ import AuthState from './context/auth/AuthState';
 import TransactionState from './context/transaction/TransactionState';
 import AnalyticsState from './context/analytics/AnalyticsState';
 
+// Hooks
+import useTokenMonitor from './utils/useTokenMonitor';
+
 import './App.css';
+
+const AppContent = () => {
+  // Monitor token expiration and refresh automatically
+  useTokenMonitor();
+
+  return (
+    <div className="App">
+      <Navbar />
+      <div className="container">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/confirm-email" element={<EmailConfirmation />} />
+          <Route 
+            path="/dashboard" 
+            element={<PrivateRoute component={Dashboard} />} 
+          />
+          <Route 
+            path="/transactions" 
+            element={<PrivateRoute component={Transactions} />} 
+          />
+          <Route 
+            path="/bill-payments" 
+            element={<PrivateRoute component={BillPayments} />} 
+          />
+          <Route 
+            path="/loans" 
+            element={<PrivateRoute component={Loans} />} 
+          />
+          <Route 
+            path="/analytics" 
+            element={<PrivateRoute component={Analytics} />} 
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 const App = () => {
   return (
@@ -31,39 +75,7 @@ const App = () => {
       <TransactionState>
         <AnalyticsState>
           <Router>
-            <div className="App">
-              <Navbar />
-              <div className="container">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/confirm-email" element={<EmailConfirmation />} />
-                  <Route 
-                    path="/dashboard" 
-                    element={<PrivateRoute component={Dashboard} />} 
-                  />
-                  <Route 
-                    path="/transactions" 
-                    element={<PrivateRoute component={Transactions} />} 
-                  />
-                  <Route 
-                    path="/bill-payments" 
-                    element={<PrivateRoute component={BillPayments} />} 
-                  />
-                  <Route 
-                    path="/loans" 
-                    element={<PrivateRoute component={Loans} />} 
-                  />
-                  <Route 
-                    path="/analytics" 
-                    element={<PrivateRoute component={Analytics} />} 
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </div>
-              <Footer />
-            </div>
+            <AppContent />
           </Router>
         </AnalyticsState>
       </TransactionState>

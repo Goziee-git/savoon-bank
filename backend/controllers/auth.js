@@ -85,3 +85,37 @@ exports.getMe = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+// Refresh token
+exports.refreshToken = async (req, res) => {
+  try {
+    // The user is already verified by the auth middleware
+    const user = await User.findByPk(req.user.id, {
+      attributes: { exclude: ['password'] }
+    });
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    // Generate new token
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRE || '24h' }
+    );
+
+    res.json({ 
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        credits: user.credits
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};

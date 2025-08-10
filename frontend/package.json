@@ -31,12 +31,7 @@
     "security:scan": "../scripts/security-scan.sh frontend high",
     "security:test": "../scripts/test-dependencies.sh frontend"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
+
   "browserslist": {
     "production": [
       ">0.2%",

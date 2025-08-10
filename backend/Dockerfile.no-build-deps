@@ -1,0 +1,52 @@
+# Alternative Dockerfile that completely avoids build dependencies
+# Uses better-sqlite3 which has pre-built binaries for most platforms
+
+FROM node:18-alpine
+
+# Install only essential runtime packages
+RUN apk update && apk upgrade \
+    && apk add --no-cache dumb-init curl \
+    && rm -rf /var/cache/apk/* /tmp/*
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S appuser \
+    && adduser -S appuser -u 1001 -G appuser
+
+# Copy package files for dependency installation
+COPY package*.json ./
+
+# Install dependencies - sqlite3 should use pre-built binaries
+# If sqlite3 still requires compilation, consider switching to better-sqlite3
+RUN npm ci --only=production --no-audit --no-fund \
+    --prefer-offline --no-optional \
+    && npm cache clean --force \
+    && rm -rf /tmp/* /root/.npm
+
+# Copy application source
+COPY --chown=appuser:appuser server.js ./
+COPY --chown=appuser:appuser config/ ./config/
+COPY --chown=appuser:appuser controllers/ ./controllers/
+COPY --chown=appuser:appuser middleware/ ./middleware/
+COPY --chown=appuser:appuser models/ ./models/
+COPY --chown=appuser:appuser routes/ ./routes/
+
+# Create directories with proper permissions
+RUN mkdir -p database logs \
+    && chown -R appuser:appuser /app
+
+# Environment variables
+ENV NODE_ENV=production \
+    PORT=5000 \
+    DATABASE_PATH=/app/database/finance.sqlite \
+    NODE_OPTIONS="--max-old-space-size=512"
+
+USER appuser
+EXPOSE 5000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=2 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.js"]

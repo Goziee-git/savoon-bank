@@ -26,8 +26,8 @@ exports.protect = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Get user from the token
-    req.user = await User.findById(decoded.id);
+    // Get user from the token (using Sequelize instead of MongoDB)
+    req.user = await User.findByPk(decoded.id);
 
     if (!req.user) {
       return res.status(401).json({

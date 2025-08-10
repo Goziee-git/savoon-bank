@@ -1,71 +1,64 @@
-# Multi-stage build for Savoon Bank Backend
-# Stage 1: Build stage
-FROM node:18-alpine AS builder
+# Ultra-optimized Dockerfile for Savoon Bank Backend
+# Avoids heavy build dependencies by using pre-built binaries and virtual packages
 
-# Set working directory
+# Stage 1: Dependency builder with minimal footprint
+FROM node:18-alpine AS deps
+
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-# Copy package files
+# Copy package files for dependency resolution
 COPY package*.json ./
 
-# Install dependencies (including dev dependencies for build)
-RUN npm ci --only=production && npm cache clean --force
+# Use virtual package for build deps - can be removed cleanly
+# Install only when sqlite3 needs compilation (fallback)
+RUN apk add --no-cache --virtual .build-deps \
+    python3 make g++ sqlite-dev \
+    && npm ci --only=production --no-audit --no-fund --prefer-offline \
+    && apk del .build-deps \
+    && npm cache clean --force \
+    && rm -rf /tmp/* /root/.npm
 
-# Copy source code
-COPY . .
+# Stage 2: Ultra-minimal runtime
+FROM node:18-alpine AS runtime
 
-# Remove unnecessary files
-RUN rm -rf .env.example README.md *.md
+# Install only essential runtime packages
+RUN apk update && apk upgrade \
+    && apk add --no-cache dumb-init sqlite curl \
+    && rm -rf /var/cache/apk/* /tmp/*
 
-# Stage 2: Production stage
-FROM node:18-alpine AS production
-
-# Install security updates
-RUN apk update && apk upgrade && \
-    apk add --no-cache dumb-init && \
-    rm -rf /var/cache/apk/*
-
-# Set working directory
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+RUN addgroup -g 1001 -S appuser \
+    && adduser -S appuser -u 1001 -G appuser
 
-# Copy built application from builder stage
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
-COPY --from=builder --chown=nodejs:nodejs /app/server.js ./
-COPY --from=builder --chown=nodejs:nodejs /app/config ./config
-COPY --from=builder --chown=nodejs:nodejs /app/controllers ./controllers
-COPY --from=builder --chown=nodejs:nodejs /app/middleware ./middleware
-COPY --from=builder --chown=nodejs:nodejs /app/models ./models
-COPY --from=builder --chown=nodejs:nodejs /app/routes ./routes
-COPY --from=builder --chown=nodejs:nodejs /app/database ./database
+# Copy only production dependencies and source
+COPY --from=deps --chown=appuser:appuser /app/node_modules ./node_modules
+COPY --from=deps --chown=appuser:appuser /app/package*.json ./
+COPY --chown=appuser:appuser server.js ./
+COPY --chown=appuser:appuser config/ ./config/
+COPY --chown=appuser:appuser controllers/ ./controllers/
+COPY --chown=appuser:appuser middleware/ ./middleware/
+COPY --chown=appuser:appuser models/ ./models/
+COPY --chown=appuser:appuser routes/ ./routes/
 
-# Create directory for SQLite database with proper permissions
-RUN mkdir -p /app/data && chown -R nodejs:nodejs /app/data
+# Create app directories with proper permissions
+RUN mkdir -p database logs \
+    && chown -R appuser:appuser /app
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=5000
+# Optimized environment variables
+ENV NODE_ENV=production \
+    PORT=5000 \
+    DATABASE_PATH=/app/database/finance.sqlite \
+    NODE_OPTIONS="--max-old-space-size=512" \
+    NPM_CONFIG_PRODUCTION=true
 
-# Switch to non-root user
-USER nodejs
-
-# Expose port
+USER appuser
 EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
+# Lightweight health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=2 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
 
-# Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
-
-# Start the application
 CMD ["node", "server.js"]

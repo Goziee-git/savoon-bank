@@ -1,150 +1,69 @@
-# Dependencies
-node_modules
+# Optimized .dockerignore for minimal build context and faster builds
+
+# Dependencies (installed in container)
+node_modules/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+.npm/
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Build output (created in container)
+build/
+dist/
 
-# Coverage directory used by tools like istanbul
-coverage
-*.lcov
+# Development and testing
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
+__tests__/
+cypress/
 
-# nyc test coverage
-.nyc_output
-
-# Grunt intermediate storage
-.grunt
-
-# Bower dependency directory
-bower_components
-
-# node-waf configuration
-.lock-wscript
-
-# Compiled binary addons
-build/Release
-
-# Dependency directories
-jspm_packages/
-
-# TypeScript v1 declaration files
-typings/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# parcel-bundler cache
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-
-# Logs
-logs
-*.log
-
-# IDE files
+# Development tools
+.eslintrc*
+.prettierrc*
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Git
-.git
-.gitignore
-
-# Docker
-Dockerfile*
-.dockerignore
+# Environment files
+.env*
+!.env.example
 
 # Documentation
 README.md
 *.md
 docs/
 
-# Test files
-src/**/*.test.js
-src/**/*.test.jsx
-src/**/*.test.ts
-src/**/*.test.tsx
-src/**/*.spec.js
-src/**/*.spec.jsx
-src/**/*.spec.ts
-src/**/*.spec.tsx
-__tests__/
-cypress/
+# Version control
+.git/
+.gitignore
 
-# Build artifacts (keep build/ for copying in Dockerfile)
-# build/
+# Docker files
+Dockerfile*
+.dockerignore*
+docker-compose*.yml
 
-# Linting
-.eslintrc*
-.prettierrc*
+# Caches
+.cache/
+.parcel-cache/
 
-# Package manager files
-package-lock.json
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Package manager
 yarn.lock
+
+# Backup files
+*.bak
+*~
 
 # Source maps
 *.map

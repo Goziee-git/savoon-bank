@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../utils/axiosInterceptor';
 import AuthContext from './authContext';
 import authReducer from './authReducer';
 import setAuthToken from '../../utils/setAuthToken';
@@ -207,6 +207,44 @@ const AuthState = props => {
   // Clear Errors
   const clearErrors = () => dispatch({ type: CLEAR_ERRORS });
 
+  // Refresh Token
+  const refreshAuthToken = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch({ type: AUTH_ERROR });
+      return;
+    }
+
+    try {
+      setAuthToken(token);
+      const res = await axios.post('/api/auth/refresh');
+      
+      dispatch({
+        type: LOGIN_SUCCESS,
+        payload: res.data
+      });
+
+      // Update token and user data
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        setAuthToken(res.data.token);
+      }
+
+      if (res.data.user) {
+        localStorage.setItem('currentUser', JSON.stringify(res.data.user));
+      }
+
+      return res.data;
+    } catch (err) {
+      console.error('Token refresh error:', err);
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
+      setAuthToken(null);
+      dispatch({ type: AUTH_ERROR });
+      throw err;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -220,7 +258,8 @@ const AuthState = props => {
         login,
         confirmEmail,
         logout,
-        clearErrors
+        clearErrors,
+        refreshAuthToken
       }}
     >
       {props.children}

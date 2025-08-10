@@ -1,0 +1,60 @@
+# Ultra-optimized Dockerfile for Savoon Bank Backend
+# Uses pre-built binaries to avoid compilation and minimize build time
+
+FROM node:18-alpine AS base
+
+# Install only essential runtime dependencies
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    dumb-init \
+    sqlite \
+    curl \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S appuser && \
+    adduser -S appuser -u 1001 -G appuser
+
+# Copy package files first for better caching
+COPY package*.json ./
+
+# Install dependencies using pre-built binaries when possible
+# This avoids the need for python3, make, g++ during installation
+RUN npm ci --only=production --no-audit --no-fund \
+    --prefer-offline \
+    --no-optional \
+    && npm cache clean --force \
+    && rm -rf /tmp/*
+
+# Copy application source
+COPY --chown=appuser:appuser server.js ./
+COPY --chown=appuser:appuser config/ ./config/
+COPY --chown=appuser:appuser controllers/ ./controllers/
+COPY --chown=appuser:appuser middleware/ ./middleware/
+COPY --chown=appuser:appuser models/ ./models/
+COPY --chown=appuser:appuser routes/ ./routes/
+
+# Create directories with proper permissions
+RUN mkdir -p /app/database /app/logs && \
+    chown -R appuser:appuser /app
+
+# Set optimized environment variables
+ENV NODE_ENV=production \
+    PORT=5000 \
+    DATABASE_PATH=/app/database/finance.sqlite \
+    NODE_OPTIONS="--max-old-space-size=512" \
+    NPM_CONFIG_PRODUCTION=true
+
+# Switch to non-root user
+USER appuser
+
+EXPOSE 5000
+
+# Lightweight health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=2 \
+    CMD curl -f http://localhost:5000/api/health || exit 1
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.js"]
