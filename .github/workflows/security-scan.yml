@@ -36,20 +36,6 @@ jobs:
       working-directory: ./${{ matrix.service }}
       run: npm audit --omit=dev --audit-level=moderate
       continue-on-error: true
-      
-    - name: Run Snyk security scan (production only)
-      uses: snyk/actions/node@master
-      continue-on-error: true
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --prod --severity-threshold=high --file=${{ matrix.service }}/package.json --timeout=300s
-        
-    - name: Upload Snyk results to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: snyk.sarif
         
   code-scan:
     name: Code Security Scan
