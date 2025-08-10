@@ -1,7 +1,7 @@
 # Alternative Dockerfile that completely avoids build dependencies
 # Uses better-sqlite3 which has pre-built binaries for most platforms
 
-FROM node:18-alpine
+FROM node:22-alpine
 
 # Install only essential runtime packages
 RUN apk update && apk upgrade \
