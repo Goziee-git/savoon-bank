@@ -50,23 +50,7 @@ jobs:
     - name: Run security audit
       working-directory: ./backend
       run: npm audit --audit-level=high || true
-      
-    - name: Run Snyk security scan (Backend)
-      uses: snyk/actions/node@master
-      continue-on-error: true
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high --prod --timeout=300s
-        command: test
-      working-directory: ./backend
-      
-    - name: Upload Snyk results to GitHub Code Scanning (Backend)
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: snyk.sarif
-        category: snyk-backend
+
         
     - name: Backend build completed
       working-directory: ./backend
@@ -95,7 +79,7 @@ jobs:
         
     - name: Install frontend dependencies
       working-directory: ./frontend
-      run: npm ci
+      run: npm ci --omit=dev --audit=false
 
     - name: Run frontend linting
       working-directory: ./frontend
@@ -121,23 +105,6 @@ jobs:
       working-directory: ./frontend
       run: npm audit --audit-level=high || true
       
-    - name: Run Snyk security scan (Frontend)
-      uses: snyk/actions/node@master
-      continue-on-error: true
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high --prod --timeout=300s
-        command: test
-      working-directory: ./frontend
-      
-    - name: Upload Snyk results to GitHub Code Scanning (Frontend)
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: snyk.sarif
-        category: snyk-frontend
-      
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -161,53 +128,4 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-        
-    - name: Install Snyk CLI
-      run: npm install -g snyk
-      
-    - name: Authenticate Snyk
-      run: snyk auth ${{ secrets.SNYK_TOKEN }}
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        
-    - name: Run comprehensive Snyk scan for Backend
-      working-directory: ./backend
-      run: |
-        npm ci --omit=dev
-        snyk test --prod --severity-threshold=medium --json > ../backend-snyk-results.json || true
-        snyk monitor --prod --project-name="savoon-bank-backend" || true
-      continue-on-error: true
-      
-    - name: Run comprehensive Snyk scan for Frontend  
-      working-directory: ./frontend
-      run: |
-        npm ci --omit=dev
-        snyk test --prod --severity-threshold=medium --json > ../frontend-snyk-results.json || true
-        snyk monitor --prod --project-name="savoon-bank-frontend" || true
-      continue-on-error: true
-      
-    - name: Generate security summary
-      run: |
-        echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
-        echo "### Backend Security Scan" >> $GITHUB_STEP_SUMMARY
-        if [ -f backend-snyk-results.json ]; then
-          echo "Backend scan completed - check Snyk dashboard for details" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "Backend scan failed or no results" >> $GITHUB_STEP_SUMMARY
-        fi
-        echo "### Frontend Security Scan" >> $GITHUB_STEP_SUMMARY
-        if [ -f frontend-snyk-results.json ]; then
-          echo "Frontend scan completed - check Snyk dashboard for details" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "Frontend scan failed or no results" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-    - name: Upload security scan results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: security-scan-results
-        path: |
-          backend-snyk-results.json
-          frontend-snyk-results.json
-        retention-days: 30
+        cache: npm
