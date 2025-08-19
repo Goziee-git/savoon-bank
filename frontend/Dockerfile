@@ -26,7 +26,7 @@ RUN npm run build \
     && rm -rf node_modules src public package*.json
 
 # Stage 2: Ultra-minimal production with nginx
-FROM nginx:1.25-alpine AS production
+FROM nginx:1.29.1-alpine AS production
 
 # Install only essential packages and remove package cache
 RUN apk update && apk upgrade \
