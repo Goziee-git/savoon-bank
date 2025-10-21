@@ -2,7 +2,7 @@
 # Eliminates heavy build dependencies and creates minimal production image
 
 # Stage 1: Build stage with minimal dependencies
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 

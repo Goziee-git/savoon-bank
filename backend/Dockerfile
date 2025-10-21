@@ -2,7 +2,7 @@
 # Avoids heavy build dependencies by using pre-built binaries and virtual packages
 
 # Stage 1: Dependency builder with minimal footprint
-FROM node:18-alpine AS deps
+FROM node:22-alpine AS deps
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && rm -rf /tmp/* /root/.npm
 
 # Stage 2: Ultra-minimal runtime
-FROM node:18-alpine AS runtime
+FROM node:22-alpine AS runtime
 
 # Install only essential runtime packages
 RUN apk update && apk upgrade \
